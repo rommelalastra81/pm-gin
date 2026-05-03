@@ -46,14 +46,7 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
-
-	//Generate JWT token
-	//token, err := config.GenerateToken(user.ID, user.Email, user.FullName)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
-	//	return
-	//}
-	//
+	
 	c.JSON(http.StatusOK, dto.RegisterSuccessful{
 		FullName: user.FullName,
 		Email:    user.Email,
