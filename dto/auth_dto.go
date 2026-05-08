@@ -6,11 +6,13 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-// AuthResponse is the response returned after successful login/register.
 type AuthResponse struct {
-	Token   string       `json:"token"`
-	User    UserResponse `json:"user"`
-	Message string       `json:"message"`
+	Token string `json:"token"`
+	//User    UserResponse `json:"user"`
+	Type     string `json:"type"`
+	UserId   uint   `json:"user_id"`
+	Email    string `json:"email"`
+	FullName string `json:"full_name"`
 }
 
 // UserResponse is a safe user representation (no password).

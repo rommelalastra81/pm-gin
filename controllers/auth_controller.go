@@ -41,13 +41,10 @@ func Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.AuthResponse{
-		Token: token,
-		User: dto.UserResponse{
-			ID:       user.ID,
-			FullName: user.FullName,
-			Email:    user.Email,
-			JobRole:  user.JobRole,
-		},
-		Message: "Login successful",
+		Token:    token,
+		UserId:   user.ID,
+		Type:     "Bearer",
+		Email:    user.Email,
+		FullName: user.FullName,
 	})
 }
