@@ -10,6 +10,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func CreateProject(c *gin.Context) {
+
+	var req dto.CreateProjectRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create project
+	project := models.Projects{
+		Name:             req.Name,
+		Description:      req.Description,
+		Status:           req.Status,
+		StartDate:        req.StartDate.Time,
+		TargetCompletion: req.TargetCompletion.Time,
+	}
+
+	if result := config.DB.Create(&project); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.ProjectsResponse{
+		Name:             project.Name,
+		Description:      project.Description,
+		Status:           project.Status,
+		StartDate:        dto.DateOnly{Time: project.StartDate},
+		TargetCompletion: dto.DateOnly{Time: project.TargetCompletion},
+	})
+}
+
 func GetAllProjects(c *gin.Context) {
 
 }
@@ -35,7 +66,7 @@ func GetProjectById(c *gin.Context) {
 		Name:             _projects.Name,
 		Description:      _projects.Description,
 		Status:           _projects.Status,
-		StartDate:        _projects.StartDate,
-		TargetCompletion: _projects.TargetCompletion,
+		StartDate:        dto.DateOnly{Time: _projects.StartDate},
+		TargetCompletion: dto.DateOnly{Time: _projects.TargetCompletion},
 	})
 }

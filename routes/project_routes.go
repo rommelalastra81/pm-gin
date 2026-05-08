@@ -11,10 +11,8 @@ import (
 func ProjectRoutes(router *gin.Engine) {
 	auth := router.Group("/api/Project")
 	{
-		// Public routes
-		//auth.POST("/createuser", controllers.RegisterUser)
-
 		// Protected routes
 		auth.GET("/getprojectbyid/:projectId", middleware.AuthMiddleware(), controllers.GetProjectById)
+		auth.POST("/createproject", middleware.AuthMiddleware(), controllers.CreateProject)
 	}
 }
