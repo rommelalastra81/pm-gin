@@ -32,16 +32,34 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.ProjectsResponse{
-		Name:             project.Name,
-		Description:      project.Description,
-		Status:           project.Status,
-		StartDate:        dto.DateOnly{Time: project.StartDate},
-		TargetCompletion: dto.DateOnly{Time: project.TargetCompletion},
-	})
+	c.JSON(http.StatusOK, project)
 }
 
 func GetAllProjects(c *gin.Context) {
+
+	var _projects []models.Projects
+
+	if result := config.DB.Find(&_projects); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error.Error(),
+		})
+		return
+	}
+
+	var response []dto.ProjectsResponse
+
+	for _, project := range _projects {
+
+		response = append(response, dto.ProjectsResponse{
+			Name:             project.Name,
+			Description:      project.Description,
+			Status:           project.Status,
+			StartDate:        dto.DateOnly{Time: project.StartDate},
+			TargetCompletion: dto.DateOnly{Time: project.TargetCompletion},
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 
 }
 

@@ -31,12 +31,12 @@ func (d DateOnly) MarshalJSON() ([]byte, error) {
 }
 
 type ProjectsResponse struct {
-	Id               uint      `json:"id"`
-	Name             string    `json:"name"`
-	Description      string    `json:"description"`
-	Status           string    `json:"status"`
-	StartDate        DateOnly  `json:"start_date"`
-	TargetCompletion DateOnly  `json:"target_completion"`
+	Id               uint     `json:"id"`
+	Name             string   `json:"name"`
+	Description      string   `json:"description"`
+	Status           string   `json:"status"`
+	StartDate        DateOnly `json:"start_date"`
+	TargetCompletion DateOnly `json:"target_completion"`
 }
 
 type CreateProjectRequest struct {
