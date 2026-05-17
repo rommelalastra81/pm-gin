@@ -35,6 +35,8 @@ func CreateProject(c *gin.Context) {
 	c.JSON(http.StatusOK, project)
 }
 
+// GetAllProjects returns an array of projects
+// GET /api/Project/getallprojects
 func GetAllProjects(c *gin.Context) {
 
 	var _projects []models.Projects

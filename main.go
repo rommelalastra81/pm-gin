@@ -31,6 +31,7 @@ func main() {
 	routes.RegisterAuthRoutes(router)
 	routes.UserRoutes(router)
 	routes.ProjectRoutes(router)
+	routes.TaskRoutes(router)
 
 	router.Run() // listens on 0.0.0.0:8080 by default
 }
