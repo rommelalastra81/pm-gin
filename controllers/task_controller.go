@@ -40,5 +40,5 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, task)
+	c.JSON(http.StatusOK, "ok")
 }

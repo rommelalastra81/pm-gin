@@ -35,24 +35,40 @@ func CreateProject(c *gin.Context) {
 	c.JSON(http.StatusOK, project)
 }
 
-// GetAllProjects returns an array of projects
-// GET /api/Project/getallprojects
+// GetAllProjects returns a paginated list of projects.
+// GET /api/Project/getallprojects/:page/:pageSize
 func GetAllProjects(c *gin.Context) {
 
-	var _projects []models.Projects
-
-	if result := config.DB.Find(&_projects); result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": result.Error.Error(),
-		})
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil || page < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
 		return
 	}
 
-	var response []dto.ProjectsResponse
+	pageSize, err := strconv.Atoi(c.Param("pageSize"))
+	if err != nil || pageSize < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page size"})
+		return
+	}
 
+	offset := (page - 1) * pageSize
+
+	var totalCount int64
+	if result := config.DB.Model(&models.Projects{}).Count(&totalCount); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	var _projects []models.Projects
+	if result := config.DB.Offset(offset).Limit(pageSize).Find(&_projects); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	var data []dto.ProjectsResponse
 	for _, project := range _projects {
-
-		response = append(response, dto.ProjectsResponse{
+		data = append(data, dto.ProjectsResponse{
+			Id:               project.ID,
 			Name:             project.Name,
 			Description:      project.Description,
 			Status:           project.Status,
@@ -61,7 +77,15 @@ func GetAllProjects(c *gin.Context) {
 		})
 	}
 
-	c.JSON(http.StatusOK, response)
+	totalPages := int((totalCount + int64(pageSize) - 1) / int64(pageSize))
+
+	c.JSON(http.StatusOK, gin.H{
+		"items":        data,
+		"currentPage":  page,
+		"pageSize":     pageSize,
+		"totalRecords": totalCount,
+		"totalPages":   totalPages,
+	})
 
 }
 
