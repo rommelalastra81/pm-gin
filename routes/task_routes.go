@@ -13,6 +13,7 @@ func TaskRoutes(router *gin.Engine) {
 		// Protected routes
 		//auth.GET("/getallprojects", middleware.AuthMiddleware(), controllers.GetAllProjects)
 		//auth.GET("/getprojectbyid/:projectId", middleware.AuthMiddleware(), controllers.GetProjectById)
+		auth.GET("/getalltasksbyprojectid/:projectId/:page/:pageSize", middleware.AuthMiddleware(), controllers.GetAllTasksByProjectId)
 		auth.POST("/createtask", middleware.AuthMiddleware(), controllers.CreateTask)
 	}
 }

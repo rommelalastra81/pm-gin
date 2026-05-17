@@ -5,7 +5,7 @@ import (
 )
 
 type Tasks struct {
-	ID             uint       `json:"id" gorm:"primaryKey"`
+	Id             uint       `json:"id" gorm:"primaryKey"`
 	Title          string     `json:"title"`
 	Description    string     `json:"description"`
 	TaskType       string     `json:"task_type"`

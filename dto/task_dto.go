@@ -35,28 +35,28 @@ func (d DateOnlyTask) MarshalJSON() ([]byte, error) {
 }
 
 type TasksResponse struct {
-	ID             uint         `json:"id" gorm:"primaryKey"`
-	Title          string       `json:"title"`
-	Description    string       `json:"description"`
-	TaskType       string       `json:"task_type"`
-	Status         string       `json:"status"`
-	Priority       string       `json:"priority"`
-	AssignedTo     uint         `json:"assigned_to"`
-	ProjectID      uint         `json:"project_id"`
-	StartDate      DateOnlyTask `json:"start_date" gorm:"type:date"`
+	Id             uint          `json:"id" gorm:"primaryKey"`
+	Title          string        `json:"title"`
+	Description    string        `json:"description"`
+	TaskType       string        `json:"task_type"`
+	Status         string        `json:"status"`
+	Priority       string        `json:"priority"`
+	AssignedTo     uint          `json:"assigned_to"`
+	ProjectID      uint          `json:"project_id"`
+	StartDate      DateOnlyTask  `json:"start_date" gorm:"type:date"`
 	CompletionDate *DateOnlyTask `json:"completion_date" gorm:"type:date"`
-	DueDate        DateOnlyTask `json:"due_date" gorm:"type:date"`
+	DueDate        DateOnlyTask  `json:"due_date" gorm:"type:date"`
 }
 
 type CreateTaskRequest struct {
-	Title          string       `json:"title"`
-	Description    string       `json:"description"`
-	TaskType       string       `json:"task_type"`
-	Status         string       `json:"status"`
-	Priority       string       `json:"priority"`
-	AssignedTo     uint         `json:"assigned_to"`
-	ProjectID      uint         `json:"project_id"`
-	StartDate      DateOnlyTask `json:"start_date" gorm:"type:date"`
+	Title          string        `json:"title"`
+	Description    string        `json:"description"`
+	TaskType       string        `json:"task_type"`
+	Status         string        `json:"status"`
+	Priority       string        `json:"priority"`
+	AssignedTo     uint          `json:"assigned_to"`
+	ProjectID      uint          `json:"project_id"`
+	StartDate      DateOnlyTask  `json:"start_date" gorm:"type:date"`
 	CompletionDate *DateOnlyTask `json:"completion_date" gorm:"type:date"`
-	DueDate        DateOnlyTask `json:"due_date" gorm:"type:date"`
+	DueDate        DateOnlyTask  `json:"due_date" gorm:"type:date"`
 }
