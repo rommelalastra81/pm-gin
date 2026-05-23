@@ -110,3 +110,84 @@ func GetAllTasksByProjectId(c *gin.Context) {
 	})
 
 }
+
+func UpdateTask(c *gin.Context) {
+	taskIdStr := c.Param("taskId")
+	taskId, err := strconv.Atoi(taskIdStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
+		return
+	}
+
+	var req dto.UpdateTaskRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var task models.Tasks
+	if result := config.DB.First(&task, taskId); result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+		return
+	}
+
+	// Update task fields
+	task.Title = req.Title
+	task.Description = req.Description
+	task.TaskType = req.TaskType
+	task.Status = req.Status
+	task.Priority = req.Priority
+	task.StartDate = req.StartDate.Time
+	task.DueDate = req.DueDate.Time
+	task.AssignedTo = req.AssignedTo
+	task.ProjectId = req.ProjectID
+
+	// Update CompletionDate if provided, or set to null
+	if req.CompletionDate != nil {
+		task.CompletionDate = &req.CompletionDate.Time
+	} else {
+		task.CompletionDate = nil
+	}
+
+	if result := config.DB.Save(&task); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update task"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Task updated successfully"})
+}
+
+func GetTaskById(c *gin.Context) {
+
+	taskIdStr := c.Param("taskId")
+	taskId, err := strconv.Atoi(taskIdStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
+		return
+	}
+
+	var task models.Tasks
+	if result := config.DB.First(&task, taskId); result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+		return
+	}
+
+	var completionDate *dto.DateOnlyTask
+	if task.CompletionDate != nil {
+		completionDate = &dto.DateOnlyTask{Time: *task.CompletionDate}
+	}
+
+	c.JSON(http.StatusOK, dto.TasksResponse{
+		Id:             task.Id,
+		Title:          task.Title,
+		Description:    task.Description,
+		TaskType:       task.TaskType,
+		Priority:       task.Priority,
+		Status:         task.Status,
+		AssignedTo:     task.AssignedTo,
+		ProjectID:      task.ProjectId,
+		StartDate:      dto.DateOnlyTask{Time: task.StartDate},
+		CompletionDate: completionDate,
+		DueDate:        dto.DateOnlyTask{Time: task.DueDate},
+	})
+}
