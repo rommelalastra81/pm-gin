@@ -17,5 +17,6 @@ func TaskRoutes(router *gin.Engine) {
 		auth.POST("/createtask", middleware.AuthMiddleware(), controllers.CreateTask)
 		auth.PUT("/updatetask/:taskId", middleware.AuthMiddleware(), controllers.UpdateTask)
 		auth.GET("/gettaskbyid/:taskId", middleware.AuthMiddleware(), controllers.GetTaskById)
+		auth.PATCH("/updatetaskstatus/:taskId", middleware.AuthMiddleware(), controllers.UpdateTaskStatus)
 	}
 }

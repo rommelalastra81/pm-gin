@@ -20,15 +20,16 @@ func CreateTask(c *gin.Context) {
 
 	// Create task with project and user relationships
 	task := models.Tasks{
-		Title:       req.Title,
-		Description: req.Description,
-		TaskType:    req.TaskType,
-		Status:      req.Status,
-		Priority:    req.Priority,
-		StartDate:   req.StartDate.Time,
-		DueDate:     req.DueDate.Time,
-		AssignedTo:  req.AssignedTo, // FK → Users.ID
-		ProjectId:   req.ProjectID,  // FK → Projects.ID
+		Title:          req.Title,
+		Description:    req.Description,
+		TaskType:       req.TaskType,
+		Status:         req.Status,
+		Priority:       req.Priority,
+		PercentageDone: req.PercentageDone,
+		StartDate:      req.StartDate.Time,
+		DueDate:        req.DueDate.Time,
+		AssignedTo:     req.AssignedTo, // FK → Users.ID
+		ProjectId:      req.ProjectID,  // FK → Projects.ID
 	}
 
 	// Only set CompletionDate if it was provided (non-null)
@@ -91,6 +92,7 @@ func GetAllTasksByProjectId(c *gin.Context) {
 			TaskType:       task.TaskType,
 			Priority:       task.Priority,
 			Status:         task.Status,
+			PercentageDone: task.PercentageDone,
 			AssignedTo:     task.AssignedTo,
 			ProjectID:      task.ProjectId,
 			StartDate:      dto.DateOnlyTask{Time: task.StartDate},
@@ -137,6 +139,7 @@ func UpdateTask(c *gin.Context) {
 	task.TaskType = req.TaskType
 	task.Status = req.Status
 	task.Priority = req.Priority
+	task.PercentageDone = req.PercentageDone
 	task.StartDate = req.StartDate.Time
 	task.DueDate = req.DueDate.Time
 	task.AssignedTo = req.AssignedTo
@@ -155,6 +158,44 @@ func UpdateTask(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Task updated successfully"})
+}
+
+func UpdateTaskStatus(c *gin.Context) {
+	taskIdStr := c.Param("taskId")
+	taskId, err := strconv.Atoi(taskIdStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
+		return
+	}
+
+	var req dto.UpdateTaskStatusRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var task models.Tasks
+	if result := config.DB.First(&task, taskId); result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+		return
+	}
+
+	task.Status = req.Status
+	task.PercentageDone = req.PercentageDone
+
+	// Update CompletionDate if provided, or set to null
+	if req.CompletionDate != nil {
+		task.CompletionDate = &req.CompletionDate.Time
+	} else {
+		task.CompletionDate = nil
+	}
+
+	if result := config.DB.Save(&task); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update task"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Task status updated successfully"})
 }
 
 func GetTaskById(c *gin.Context) {
@@ -184,6 +225,7 @@ func GetTaskById(c *gin.Context) {
 		TaskType:       task.TaskType,
 		Priority:       task.Priority,
 		Status:         task.Status,
+		PercentageDone: task.PercentageDone,
 		AssignedTo:     task.AssignedTo,
 		ProjectID:      task.ProjectId,
 		StartDate:      dto.DateOnlyTask{Time: task.StartDate},

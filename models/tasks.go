@@ -11,6 +11,7 @@ type Tasks struct {
 	TaskType       string     `json:"task_type"`
 	Status         string     `json:"status"`
 	Priority       string     `json:"priority"`
+	PercentageDone int        `json:"percentage_done"`
 	StartDate      time.Time  `json:"start_date" gorm:"type:date"`
 	CompletionDate *time.Time `json:"completion_date" gorm:"type:date"`
 	DueDate        time.Time  `json:"due_date" gorm:"type:date"`
