@@ -89,6 +89,29 @@ func GetAllProjects(c *gin.Context) {
 
 }
 
+// returns non paginated list of all projects
+func GetProjects(c *gin.Context) {
+
+	var _projects []models.Projects
+	if result := config.DB.Find(&_projects); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	var data []dto.ProjectsResponse
+	for _, project := range _projects {
+		data = append(data, dto.ProjectsResponse{
+			Id:               project.ID,
+			Name:             project.Name,
+			Description:      project.Description,
+			Status:           project.Status,
+			StartDate:        dto.DateOnly{Time: project.StartDate},
+			TargetCompletion: dto.DateOnly{Time: project.TargetCompletion},
+		})
+	}
+	c.JSON(http.StatusOK, data)
+}
+
 // GetProjectById returns a project by its ID.
 // GET /api/Project/getprojectbyid/:projectId
 func GetProjectById(c *gin.Context) {

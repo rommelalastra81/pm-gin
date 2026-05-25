@@ -13,6 +13,7 @@ func ProjectRoutes(router *gin.Engine) {
 	{
 		// Protected routes
 		auth.GET("/getallprojects/:page/:pageSize", middleware.AuthMiddleware(), controllers.GetAllProjects)
+		auth.GET("/getprojects", middleware.AuthMiddleware(), controllers.GetProjects) // TEMPORARY
 		auth.GET("/getprojectbyid/:projectId", middleware.AuthMiddleware(), controllers.GetProjectById)
 		auth.POST("/createproject", middleware.AuthMiddleware(), controllers.CreateProject)
 	}
