@@ -220,3 +220,46 @@ func GetUsersNotOnProject(c *gin.Context) {
 
 	c.JSON(http.StatusOK, data)
 }
+
+func GetProjectMemberById(c *gin.Context) {
+	Id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || Id < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project member ID"})
+		return
+	}
+
+	var projectMember models.ProjectMembers
+	if result := config.DB.
+		Preload("Users").
+		Preload("MemberRoles").
+		Preload("MemberRoles.Roles").
+		First(&projectMember, Id); result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Project member not found with id: %d", Id)})
+		return
+	}
+
+	resp := dto.ProjectMemberResponse{
+		Id:        projectMember.Id,
+		UserId:    projectMember.UserId,
+		ProjectId: projectMember.ProjectId,
+	}
+
+	// Get user full name
+	if projectMember.Users.Id != 0 {
+		fullName := projectMember.Users.FullName
+		resp.FullName = &fullName
+	}
+
+	// Get role info from first MemberRole (matching GetMembersByProjectId logic)
+	if len(projectMember.MemberRoles) > 0 {
+		mr := projectMember.MemberRoles[0]
+		if mr.Roles.Id != 0 {
+			roleId := mr.Roles.Id
+			roleName := mr.Roles.Role
+			resp.RoleId = &roleId
+			resp.Role = &roleName
+		}
+	}
+
+	c.JSON(http.StatusOK, resp)
+}

@@ -15,5 +15,6 @@ func ProjectMemberRoutes(router *gin.Engine) {
 		auth.POST("/addprojectmembers/:projectId", middleware.AuthMiddleware(), controllers.AddProjectMembers)
 		auth.GET("/getmembersbyprojectid/:projectId/:page/:pageSize", middleware.AuthMiddleware(), controllers.GetMembersByProjectId)
 		auth.GET("/getusersnotonproject/:projectId", middleware.AuthMiddleware(), controllers.GetUsersNotOnProject)
+		auth.GET("/getprojectmemberbyid/:id", middleware.AuthMiddleware(), controllers.GetProjectMemberById)
 	}
 }
