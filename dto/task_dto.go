@@ -41,7 +41,7 @@ type TasksResponse struct {
 	TaskType       string        `json:"task_type"`
 	Status         string        `json:"status"`
 	Priority       string        `json:"priority"`
-	PercentageDone int           `json:"percentage_done"`
+	PercentageDone uint          `json:"percentage_done"`
 	AssignedTo     uint          `json:"assigned_to"`
 	ProjectID      uint          `json:"project_id"`
 	StartDate      DateOnlyTask  `json:"start_date" gorm:"type:date"`
@@ -55,7 +55,7 @@ type CreateTaskRequest struct {
 	TaskType       string        `json:"task_type"`
 	Status         string        `json:"status"`
 	Priority       string        `json:"priority"`
-	PercentageDone int           `json:"percentage_done"`
+	PercentageDone uint          `json:"percentage_done"`
 	AssignedTo     uint          `json:"assigned_to"`
 	ProjectID      uint          `json:"project_id"`
 	StartDate      DateOnlyTask  `json:"start_date" gorm:"type:date"`
@@ -69,7 +69,7 @@ type UpdateTaskRequest struct {
 	TaskType       string        `json:"task_type"`
 	Status         string        `json:"status"`
 	Priority       string        `json:"priority"`
-	PercentageDone int           `json:"percentage_done"`
+	PercentageDone uint          `json:"percentage_done"`
 	AssignedTo     uint          `json:"assigned_to"`
 	ProjectID      uint          `json:"project_id"`
 	StartDate      DateOnlyTask  `json:"start_date" gorm:"type:date"`
@@ -79,6 +79,6 @@ type UpdateTaskRequest struct {
 
 type UpdateTaskStatusRequest struct {
 	Status         string        `json:"status" binding:"required"`
-	PercentageDone int           `json:"percentage_done"`
+	PercentageDone uint          `json:"percentage_done"`
 	CompletionDate *DateOnlyTask `json:"completion_date" gorm:"type:date"`
 }

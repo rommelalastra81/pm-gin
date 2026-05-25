@@ -14,7 +14,7 @@ func TaskRoutes(router *gin.Engine) {
 		//auth.GET("/getallprojects", middleware.AuthMiddleware(), controllers.GetAllProjects)
 		//auth.GET("/getprojectbyid/:projectId", middleware.AuthMiddleware(), controllers.GetProjectById)
 		auth.GET("/getpaginatedtasksbyprojectid/:projectId/:page/:pageSize", middleware.AuthMiddleware(), controllers.GetAllTasksByProjectId)
-		auth.GET("/getalltasksbyowner/:projectId/:assignedTo/:page/:pageSize", middleware.AuthMiddleware(), controllers.GetAllTasksByOwner)
+		auth.GET("/getpaginatedtasksbyowner/:projectId/:assignedTo/:page/:pageSize", middleware.AuthMiddleware(), controllers.GetAllTasksByOwner)
 		auth.POST("/createtask", middleware.AuthMiddleware(), controllers.CreateTask)
 		auth.PUT("/updatetask/:taskId", middleware.AuthMiddleware(), controllers.UpdateTask)
 		auth.GET("/gettaskbyid/:taskId", middleware.AuthMiddleware(), controllers.GetTaskById)

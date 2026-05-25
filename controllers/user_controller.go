@@ -46,7 +46,7 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, dto.RegisterSuccessful{
 		FullName: user.FullName,
 		Email:    user.Email,
@@ -74,7 +74,7 @@ func GetUserProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.UserResponse{
-		ID:       user.ID,
+		ID:       user.Id,
 		FullName: user.FullName,
 		Email:    user.Email,
 		JobRole:  user.JobRole,

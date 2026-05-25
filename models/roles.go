@@ -1,7 +1,7 @@
 package models
 
 type Roles struct {
-	ID   uint   `json:"id" gorm:"primaryKey"`
+	Id   uint   `json:"id" gorm:"primaryKey"`
 	Role string `json:"role"`
 
 	// One-to-Many

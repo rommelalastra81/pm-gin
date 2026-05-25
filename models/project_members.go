@@ -1,7 +1,7 @@
 package models
 
 type ProjectMembers struct {
-	ID uint `json:"id" gorm:"primaryKey"`
+	Id uint `json:"id" gorm:"primaryKey"`
 
 	// Many-to-One (User)
 	UserId uint  `json:"user_id"`
