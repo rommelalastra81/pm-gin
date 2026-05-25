@@ -14,7 +14,7 @@ func ProjectMemberRoutes(router *gin.Engine) {
 		// Protected routes
 		auth.POST("/addprojectmembers/:projectId", middleware.AuthMiddleware(), controllers.AddProjectMembers)
 		auth.GET("/getmembersbyprojectid/:projectId/:page/:pageSize", middleware.AuthMiddleware(), controllers.GetMembersByProjectId)
-		auth.GET("/getusersnotonproject/:projectId", middleware.AuthMiddleware(), controllers.GetUsersNotOnProject)
+		auth.GET("/getusersnotinproject/:projectId", middleware.AuthMiddleware(), controllers.GetUsersNotOnProject)
 		auth.GET("/getprojectmemberbyid/:id", middleware.AuthMiddleware(), controllers.GetProjectMemberById)
 	}
 }
