@@ -113,6 +113,80 @@ func GetAllTasksByProjectId(c *gin.Context) {
 
 }
 
+func GetAllTasksByOwner(c *gin.Context) {
+
+	projectId, err := strconv.Atoi(c.Param("projectId"))
+	assignedTo, err := strconv.Atoi(c.Param("assignedTo"))
+	if err != nil || projectId < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project ID"})
+		return
+	}
+
+	if err != nil || assignedTo < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid assigned-to ID"})
+		return
+	}
+
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil || page < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
+		return
+	}
+
+	pageSize, err := strconv.Atoi(c.Param("pageSize"))
+	if err != nil || pageSize < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page size"})
+		return
+	}
+
+	offset := (page - 1) * pageSize
+
+	var totalCount int64
+	if result := config.DB.Model(&models.Tasks{}).Where("project_id = ? AND assigned_to = ?", projectId, assignedTo).Count(&totalCount); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	var _tasks []models.Tasks
+	if result := config.DB.Where("project_id = ? AND assigned_to = ?", projectId, assignedTo).Offset(offset).Limit(pageSize).Find(&_tasks); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	var data []dto.TasksResponse
+	for _, task := range _tasks {
+		var completionDate *dto.DateOnlyTask
+		if task.CompletionDate != nil {
+			completionDate = &dto.DateOnlyTask{Time: *task.CompletionDate}
+		}
+		data = append(data, dto.TasksResponse{
+			Id:             task.Id,
+			Title:          task.Title,
+			Description:    task.Description,
+			TaskType:       task.TaskType,
+			Priority:       task.Priority,
+			Status:         task.Status,
+			PercentageDone: task.PercentageDone,
+			AssignedTo:     task.AssignedTo,
+			ProjectID:      task.ProjectId,
+			StartDate:      dto.DateOnlyTask{Time: task.StartDate},
+			CompletionDate: completionDate,
+			DueDate:        dto.DateOnlyTask{Time: task.DueDate},
+		})
+	}
+
+	totalPages := int((totalCount + int64(pageSize) - 1) / int64(pageSize))
+
+	c.JSON(http.StatusOK, gin.H{
+		"items":        data,
+		"currentPage":  page,
+		"pageSize":     pageSize,
+		"totalRecords": totalCount,
+		"totalPages":   totalPages,
+	})
+
+}
+
 func UpdateTask(c *gin.Context) {
 	taskIdStr := c.Param("taskId")
 	taskId, err := strconv.Atoi(taskIdStr)
