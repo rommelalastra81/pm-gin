@@ -81,6 +81,13 @@ func GetAllTasksByProjectId(c *gin.Context) {
 
 	var data []dto.TasksResponse
 	for _, task := range _tasks {
+
+		var _user []models.Users
+		if resultUser := config.DB.First(&_user, task.AssignedTo); resultUser.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": resultUser.Error.Error()})
+			return
+		}
+
 		var completionDate *dto.DateOnlyTask
 		if task.CompletionDate != nil {
 			completionDate = &dto.DateOnlyTask{Time: *task.CompletionDate}
@@ -98,6 +105,8 @@ func GetAllTasksByProjectId(c *gin.Context) {
 			StartDate:      dto.DateOnlyTask{Time: task.StartDate},
 			CompletionDate: completionDate,
 			DueDate:        dto.DateOnlyTask{Time: task.DueDate},
+			UserId:         task.AssignedTo,
+			FullName:       _user[0].FullName,
 		})
 	}
 

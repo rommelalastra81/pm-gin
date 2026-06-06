@@ -47,6 +47,8 @@ type TasksResponse struct {
 	StartDate      DateOnlyTask  `json:"start_date" gorm:"type:date"`
 	CompletionDate *DateOnlyTask `json:"completion_date" gorm:"type:date"`
 	DueDate        DateOnlyTask  `json:"due_date" gorm:"type:date"`
+	UserId         uint          `json:"user_id"`
+	FullName       string        `json:"full_name"`
 }
 
 type CreateTaskRequest struct {
