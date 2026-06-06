@@ -3,7 +3,7 @@ package models
 import "time"
 
 type TimeEntries struct {
-	ID         uint      `json:"id" gorm:"primaryKey"`
+	Id         uint      `json:"id" gorm:"primaryKey"`
 	Activities string    `json:"activities"`
 	Date       time.Time `json:"date" gorm:"type:date"`
 	StartTime  time.Time `json:"start_time" gorm:"type:time"`

@@ -68,7 +68,7 @@ func GetAllProjects(c *gin.Context) {
 	var data []dto.ProjectsResponse
 	for _, project := range _projects {
 		data = append(data, dto.ProjectsResponse{
-			Id:               project.ID,
+			Id:               project.Id,
 			Name:             project.Name,
 			Description:      project.Description,
 			Status:           project.Status,
@@ -101,7 +101,7 @@ func GetProjects(c *gin.Context) {
 	var data []dto.ProjectsResponse
 	for _, project := range _projects {
 		data = append(data, dto.ProjectsResponse{
-			Id:               project.ID,
+			Id:               project.Id,
 			Name:             project.Name,
 			Description:      project.Description,
 			Status:           project.Status,
@@ -129,7 +129,7 @@ func GetProjectById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.ProjectsResponse{
-		Id:               _projects.ID,
+		Id:               _projects.Id,
 		Name:             _projects.Name,
 		Description:      _projects.Description,
 		Status:           _projects.Status,
