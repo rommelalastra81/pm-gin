@@ -94,7 +94,7 @@ func AddProjectMembers(c *gin.Context) {
 	tx.Commit()
 
 	// Convert to response DTOs
-	var data []dto.ProjectMemberResponse
+	data := make([]dto.ProjectMemberResponse, 0)
 	for _, member := range savedMembers {
 		data = append(data, dto.ProjectMemberResponse{
 			Id:        member.Id,
@@ -146,7 +146,7 @@ func GetMembersByProjectId(c *gin.Context) {
 		return
 	}
 
-	var data []dto.ProjectMemberResponse
+	data := make([]dto.ProjectMemberResponse, 0)
 	for _, member := range _projectMembers {
 		resp := dto.ProjectMemberResponse{
 			Id:        member.Id,
@@ -208,7 +208,7 @@ func GetUsersNotOnProject(c *gin.Context) {
 		return
 	}
 
-	var data []dto.UserProjectMemberDTO
+	data := make([]dto.UserProjectMemberDTO, 0)
 	for _, user := range users {
 		data = append(data, dto.UserProjectMemberDTO{
 			Id:       user.Id,

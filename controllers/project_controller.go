@@ -65,7 +65,7 @@ func GetAllProjects(c *gin.Context) {
 		return
 	}
 
-	var data []dto.ProjectsResponse
+	data := make([]dto.ProjectsResponse, 0)
 	for _, project := range _projects {
 		data = append(data, dto.ProjectsResponse{
 			Id:               project.Id,
@@ -98,7 +98,7 @@ func GetProjects(c *gin.Context) {
 		return
 	}
 
-	var data []dto.ProjectsResponse
+	data := make([]dto.ProjectsResponse, 0)
 	for _, project := range _projects {
 		data = append(data, dto.ProjectsResponse{
 			Id:               project.Id,

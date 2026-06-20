@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetTaskCommentsByTaskId(c *gin.Context) {
+func GetTimeEntries(c *gin.Context) {
 
 	taskId, err := strconv.Atoi(c.Param("taskId"))
 	if err != nil || taskId < 1 {
@@ -33,30 +33,30 @@ func GetTaskCommentsByTaskId(c *gin.Context) {
 	offset := (page - 1) * pageSize
 
 	var totalCount int64
-	if result := config.DB.Model(&models.TaskComments{}).Where("task_id = ?", taskId).Count(&totalCount); result.Error != nil {
+	if result := config.DB.Model(&models.TimeEntries{}).Where("task_id = ?", taskId).Count(&totalCount); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
-	var _tasksComments []models.TaskComments
-	if result := config.DB.Preload("Users").Where("task_id = ?", taskId).Offset(offset).Limit(pageSize).Find(&_tasksComments); result.Error != nil {
+	var _timeEntries []models.TimeEntries
+	if result := config.DB.Where("task_id = ?", taskId).Offset(offset).Limit(pageSize).Find(&_timeEntries); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
 	totalPages := int((totalCount + int64(pageSize) - 1) / int64(pageSize))
 
-	data := make([]dto.TaskCommentResponse, 0)
-	for _, taskComment := range _tasksComments {
+	data := make([]dto.TimeEntryResponse, 0)
+	for _, timeEntry := range _timeEntries {
 
-		data = append(data, dto.TaskCommentResponse{
-			Id:        taskComment.Id,
-			UserId:    taskComment.UserId,
-			TaskId:    taskComment.TaskId,
-			FullName:  taskComment.Users.FullName,
-			Comment:   taskComment.Comment,
-			CreatedAt: taskComment.CreatedAt,
-			UpdatedAt: taskComment.UpdatedAt,
+		data = append(data, dto.TimeEntryResponse{
+			Id:         timeEntry.Id,
+			UserId:     timeEntry.UserId,
+			TaskId:     timeEntry.TaskId,
+			Activities: timeEntry.Activities,
+			Date:       dto.DateOnlyTimeEntry{Time: timeEntry.Date},
+			StartTime:  dto.TimeOnlyTimeEntry{Time: timeEntry.StartTime},
+			EndTime:    dto.TimeOnlyTimeEntry{Time: timeEntry.EndTime},
 		})
 	}
 

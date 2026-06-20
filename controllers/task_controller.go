@@ -79,7 +79,7 @@ func GetAllTasksByProjectId(c *gin.Context) {
 		return
 	}
 
-	var data []dto.TasksResponse
+	data := make([]dto.TasksResponse, 0)
 	for _, task := range _tasks {
 
 		var _user []models.Users
@@ -162,7 +162,7 @@ func GetAllTasksByOwner(c *gin.Context) {
 		return
 	}
 
-	var data []dto.TasksResponse
+	data := make([]dto.TasksResponse, 0)
 	for _, task := range _tasks {
 		var completionDate *dto.DateOnlyTask
 		if task.CompletionDate != nil {

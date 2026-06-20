@@ -44,6 +44,7 @@ func main() {
 	routes.ProjectMemberRoutes(router)
 	routes.MemberRoleRoutes(router)
 	routes.TaskCommentRoutes(router)
+	routes.TTimeEntryRoutes(router)
 
 	//router.Run() // listens on 0.0.0.0:8080 by default
 	router.Run(":3000")
