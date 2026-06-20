@@ -14,13 +14,17 @@ const dateLayoutTask = "2006-01-02"
 
 func (d *DateOnlyTask) UnmarshalJSON(b []byte) error {
 	s := string(b)
-	// handle JSON null — leave time as zero value
-	if s == "null" {
+	// handle JSON null or empty string — leave time as zero value
+	if s == "null" || s == `""` || s == "" {
 		return nil
 	}
 	// strip surrounding quotes
 	if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
 		s = s[1 : len(s)-1]
+	}
+	// if the unquoted value is empty, treat as zero value
+	if s == "" {
+		return nil
 	}
 	t, err := time.Parse(dateLayoutTask, s)
 	if err != nil {

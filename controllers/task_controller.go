@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"pm-gin/config"
 	"pm-gin/dto"
@@ -14,9 +15,11 @@ func CreateTask(c *gin.Context) {
 
 	var req dto.CreateTaskRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		fmt.Println("CreateTask bind error:", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Printf("CreateTask payload: %+v\n", req)
 
 	// Create task with project and user relationships
 	task := models.Tasks{
@@ -38,11 +41,39 @@ func CreateTask(c *gin.Context) {
 	}
 
 	if result := config.DB.Create(&task); result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create task"})
 		return
 	}
 
-	c.JSON(http.StatusOK, "ok")
+	var assignedUser models.Users
+	if task.AssignedTo > 0 {
+		if result := config.DB.First(&assignedUser, task.AssignedTo); result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch assigned user"})
+			return
+		}
+	}
+
+	var completionDate *dto.DateOnlyTask
+	if task.CompletionDate != nil {
+		completionDate = &dto.DateOnlyTask{Time: *task.CompletionDate}
+	}
+
+	c.JSON(http.StatusCreated, dto.TasksResponse{
+		Id:             task.Id,
+		Title:          task.Title,
+		Description:    task.Description,
+		TaskType:       task.TaskType,
+		Priority:       task.Priority,
+		Status:         task.Status,
+		PercentageDone: task.PercentageDone,
+		AssignedTo:     task.AssignedTo,
+		ProjectID:      task.ProjectId,
+		StartDate:      dto.DateOnlyTask{Time: task.StartDate},
+		CompletionDate: completionDate,
+		DueDate:        dto.DateOnlyTask{Time: task.DueDate},
+		UserId:         task.AssignedTo,
+		FullName:       assignedUser.FullName,
+	})
 }
 
 func GetAllTasksByProjectId(c *gin.Context) {
